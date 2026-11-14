@@ -1,15 +1,15 @@
 # Fake News Detection
 
-CS4210 group project comparing logistic regression and a decision tree classifier using article text from the ISOT Fake News Dataset.
+CS4210 group project comparing logistic regression and a decision tree classifier on the ISOT Fake News Dataset.
 
 ## Setup
 
-Download and extract the dataset from:
+Download the dataset:
 https://onlineacademiccommunity.uvic.ca/isot/2022/11/27/fake-news-detection-datasets/
 
-Create a `data` folder in this project and place `True.csv` and `Fake.csv` inside it.
+Create a `data` folder and place `True.csv` and `Fake.csv` inside it.
 
-Create and activate a Python environment, then install the packages:
+From the project folder, run:
 
 ```bash
 python3 -m venv .venv
@@ -19,21 +19,31 @@ python -m pip install pandas scikit-learn
 
 ## Run
 
-Run these commands from the project folder:
-
 ```bash
 python inspect_data.py
 python train_models.py
 ```
 
-`inspect_data.py` inspects the original files, assigns labels, removes blank and exact duplicate article texts, and saves `data/news_cleaned.csv`.
+- `inspect_data.py` labels and combines the articles, removes blank and exact duplicate texts, and saves `data/news_cleaned.csv`.
+- `train_models.py` converts text into TF-IDF features, trains both models, and prints accuracy, precision, recall, and F1.
 
-`train_models.py` uses an 80/20 stratified split, converts article text into TF-IDF features, trains both models, and prints evaluation results.
+Labels are `0 = real` and `1 = fake`. Precision, recall, and F1 are reported for the fake class.
 
-Labels: `0 = real`, `1 = fake`.
+## Experiment Settings
+
+Both models use the same 80/20 stratified training/test split with `random_state=123`.
+
+- TF-IDF: up to 5,000 features, fitted on training text only.
+- Logistic regression: `max_iter=1000`.
+- Decision tree: `max_depth=10`.
+- Both models use `random_state=123`.
+
+## Data Preparation
+
+The original dataset contained 44,898 articles. Preparation removed 631 blank-text rows and then 5,623 exact duplicate rows, leaving 38,644 articles: 21,191 real and 17,453 fake.
 
 ## Limitations
 
-Results measure performance against the dataset labels, not independent fact verification. Initial inspection found that the decision tree relied heavily on the word “reuters,” suggesting source-related shortcuts.
+The models predict dataset labels rather than independently verify facts. An earlier diagnostic found that “reuters” accounted for approximately 98.49% of the decision tree’s impurity-based feature importance, suggesting heavy reliance on a source identifier. Exact deduplication does not remove all near-duplicates or source/style bias.
 
-Dataset files and the Python environment are excluded from this repository.
+Dataset files and the virtual environment are excluded from GitHub. Each group member must download the data and follow the setup instructions.
